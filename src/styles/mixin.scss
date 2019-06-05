@@ -1,0 +1,16 @@
+@mixin font($font-size){ font-size: $font-size + px; [data-dpr="2"] & { font-size: $font-size * 1 + px; } [data-dpr="3"] & { font-size: $font-size * 1.5 + px; } }
+
+@mixin fontIm($font-size){ font-size: $font-size + px !important; [data-dpr="2"] & { font-size: $font-size * 1 + px !important; } [data-dpr="3"] & { font-size: $font-size * 1.5 + px !important; } }
+
+/*
+@mixin bgImage($url) {
+  background-image: url($url + "@2x.png");
+  @media (-webkit-min-device-pixel-ratio:3),(min-device-pixel-ratio:3){
+    background-image: url($url + "@3x.png")
+  }
+}
+*/
+
+@mixin bgImage($url) {
+  background-image: url($url + '.png');
+}

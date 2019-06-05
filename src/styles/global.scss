@@ -1,0 +1,350 @@
+@import '../assets/icons/iconfont.css';
+@import '../styles/mixin.scss';
+// 常用公共样式
+.f-cb:after, .f-cbli li:after {
+  display: block;
+  clear: both;
+  visibility: hidden;
+  height: 0;
+  overflow: hidden;
+  content: ".";
+}
+
+.f-cb, .f-cbli li {
+  zoom: 1;
+}
+
+.f-ib {
+  display: inline-block;
+  *display: inline;
+  *zoom: 1;
+}
+
+.f-dn {
+  display: none;
+}
+
+.f-db {
+  display: block;
+}
+
+.f-fl {
+  float: left;
+}
+
+.f-fr {
+  float: right;
+}
+
+.f-pr {
+  position: relative;
+}
+
+.f-prz {
+  position: relative;
+  zoom: 1;
+}
+
+.f-pa {
+  position: absolute;
+}
+
+.f-oh {
+  overflow: hidden;
+}
+
+.f-ff0 {
+  font-family: arial, \5b8b\4f53;
+}
+
+.f-ff1 {
+  font-family: "Microsoft YaHei", \5fae\8f6f\96c5\9ed1, arial, \5b8b\4f53;
+}
+
+.f-fs1 {
+  font-size: 12px;
+}
+
+.f-fs2 {
+  font-size: 14px;
+}
+
+.f-dib {
+  display: inline-block;
+}
+
+.bg-full-center {
+  background-size: 100% 100%;
+  background-position: center center;
+}
+
+.wholeInner {
+  width: 100%;
+  height: 100%;
+}
+
+.over2line {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  line-height: 1.2
+}
+
+.over1line {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  line-height: 1.2
+}
+
+.mar-t-10 {
+  margin-top: 10px;
+}
+
+.mar-b-10 {
+  margin-bottom: 10px;
+}
+
+.mar-l-10 {
+  margin-left: 10px;
+}
+
+.mar-r-10 {
+  margin-right: 10px;
+}
+
+.sub-btn{
+  margin: 0 auto;
+  width: 9.2rem;
+  height: 1.173333rem;
+  text-align: center;
+  line-height: 1.173333rem;
+  background: linear-gradient(60deg, #09226b, #1c52bb);
+  border-radius: 8px;
+  font-size: 14px;
+  color: #fff;
+}
+
+.vm{
+  vertical-align: middle;
+}
+
+/* 外层容器最大值限制 */
+// html, body {
+//   max-width: 640px;
+//   margin: 0 auto;
+// }
+body {
+  background-color: #ffffff;
+}
+
+.f-obcenter {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.btn-default {
+  width: 100%;
+  background-color: #1d5bc7;
+  @include font(14);
+  box-shadow: 0 1px 2px 2px #8cd3fe;
+}
+
+/* card样式 */
+.card {
+  background-color: #ffffff;
+  border-radius: .133333rem;
+  box-shadow: 0 0 .133333rem #dfdfdf;
+}
+
+/* cell样式 */
+.cell-default {
+  .mint-cell-wrapper {
+    height: 1.466667rem;
+    padding: 0;
+    border-bottom: 1px solid #E2E2E2;
+    position: relative;
+
+    .mint-cell-title {
+      display: flex;
+      align-items: center;
+
+      .icon {
+        display: block;
+        width: .986667rem;
+        height: 1.466667rem;
+        background-repeat: no-repeat;
+        background-position: left center;
+      }
+
+      .mint-cell-text {
+        @include font(15);
+        color: #444444;
+      }
+    }
+
+    .mint-cell-value {
+      height: 1.466667rem;
+      display: flex;
+      align-items: center;
+      @include font(13);
+      color: #888888;
+
+      &.is-link {
+        margin-right: .453333rem;
+      }
+    }
+
+    .mint-cell-allow-right {
+      position: absolute;
+      width: .213333rem;
+      height: .36rem;
+      top: 50%;
+      right: 0;
+      @include bgImage('../assets/images/arrow_right');
+      background-size: 100% 100%;
+      transform: rotate(0);
+      transform: translateY(-50%);
+
+      &::after {
+        display: none;
+      }
+    }
+  }
+}
+
+/* noData样式 */
+.noData {
+  width: 100%;
+  @include font(14);
+  line-height: 2.666667rem;
+  text-align: center;
+}
+
+/* 移动端滚动事件不流畅 */
+.iosscroll {
+  -webkit-overflow-scrolling: touch;
+}
+
+div {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* 覆盖mint-ui tab默认样式 */
+.mint-navbar {
+  width: 100%;
+  height: 1.333333rem;
+
+  .mint-tab-item {
+    position: relative;
+
+    .mint-tab-item-label {
+      color: #999999;
+      @include fontIm(14);
+    }
+
+    &.is-selected {
+      border: none;
+      margin: 0;
+
+      &::before {
+        content: '';
+        display: block;
+        position: absolute;
+        width: .773333rem;
+        height: .066667rem;
+        border-radius: .026667rem;
+        background-color: #1d5bc7;
+        left: 50%;
+        bottom: 0;
+        transform: translateX(-50%);
+      }
+
+      .mint-tab-item-label {
+        color: #333333;
+        font-weight: 500;
+      }
+
+    }
+  }
+}
+
+/* mint-ui Toast 默认样式 */
+.mint-toast {
+  z-index: 999999;
+}
+
+.mint-msgbox-btn {
+  @include font(16);
+}
+
+/* mint-ui loading 默认样式 */
+.mint-indicator-wrapper {
+  z-index: 999998;
+}
+
+// img-inputer样式覆盖
+.img-inputer {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 999;
+
+  i, p, label {
+    display: none;
+  }
+
+  input {
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+
+  .img-inputer__preview-box {
+    width: 100%;
+    height: 100%;
+
+    img {
+      max-width: 100%;
+      height: 100%;
+    }
+  }
+}
+
+/* 翻页动效 */
+.slide-right-enter-active,
+.slide-right-leave-active,
+.slide-left-enter-active,
+.slide-left-leave-active {
+  will-change: transform;
+  transition: all 200ms;
+  position: absolute;
+}
+
+.slide-right-enter {
+  opacity: 0;
+  transform: translate3d(-100%, 0, 0);
+}
+
+.slide-right-leave-active {
+  opacity: 0;
+  transform: translate3d(100%, 0, 0);
+}
+
+.slide-left-enter {
+  opacity: 0;
+  transform: translate3d(100%, 0, 0);
+}
+
+.slide-left-leave-active {
+  opacity: 0;
+  transform: translate3d(-100%, 0, 0);
+}
