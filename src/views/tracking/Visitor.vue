@@ -10,25 +10,23 @@
 <template>
   <div class="visitor-outer">
     <div class="visitor">
-      <ul class="list"
-          infinite-scroll-disabled="noMore"
-          infinite-scroll-distance="20"
-          infinite-scroll-immediate-check="false"
-          v-infinite-scroll="loadMore">
-        <li :key="index" class="l-member" v-for="(item, index) in dataList">
-          <div class="avatar">
-            <img :src="item.avatar_url" alt="" class="img f-db">
-          </div>
-          <div class="mes">
-            <p class="name">{{item.user_name}}</p>
-            <p class="desc">浏览了我的 《{{item.title}}》 文章</p>
-            <p class="date-duration">
-              <span class="date">{{item.created_at}}</span>
-              <span class="duration">浏览时长：{{item.browsing_duration}}</span>
-            </p>
-          </div>
-        </li>
-      </ul>
+      <scroller :on-infinite="loadMore" :on-refresh="refresh" ref="my_scroller">
+        <ul class="list">
+          <li :key="index" class="l-member" v-for="(item, index) in dataList">
+            <div class="avatar">
+              <img :src="item.avatar_url" alt="" class="img f-db">
+            </div>
+            <div class="mes">
+              <p class="name">{{item.user_name}}</p>
+              <p class="desc">浏览了我的 《{{item.title}}》 文章</p>
+              <p class="date-duration">
+                <span class="date">{{item.created_at}}</span>
+                <span class="duration">浏览时长：{{item.browsing_duration}}</span>
+              </p>
+            </div>
+          </li>
+        </ul>
+      </scroller>
     </div>
   </div>
 </template>
@@ -39,8 +37,6 @@
   export default {
     data () {
       return {
-        noMore: false,
-        colding: false,
         dataList: [],
         pageOpts: {
           currentPage: 1,
@@ -49,30 +45,30 @@
       }
     },
 
-    created () {
-      this.loadMore();
-    },
-
     methods: {
       /**
        * 加载更多
        */
       loadMore () {
-        if (this.colding) return;
-        this.colding = true;
         this['SET_LOADING']('open');
         getTrackVisitorsList({
           page: this.pageOpts.currentPage,
           page_size: this.pageOpts.pageSize
         }).then(res => {
           setTimeout(() => {
-            this.colding = false;
             this['SET_LOADING']('close');
-            res.data.length <= 0 && (this.noMore = true);
-            this.pageOpts.currentPage++;
             this.dataList = [...this.dataList, ...res.data];
-          }, 1000);
-        });
+            this.$refs.my_scroller.finishInfinite();
+            if(this.pageOpts.currentPage == res.last_page) {
+              this.$refs.my_scroller.finishInfinite(true);
+            } else {
+              this.pageOpts.currentPage++;
+            }
+          }, 200);
+        })
+      },
+      refresh() {
+        this.$refs.my_scroller.finishPullToRefresh(true);
       },
       ...mapMutations(['SET_LOADING'])
     }
@@ -88,7 +84,6 @@
     .visitor {
       width: 100%;
       height: 100%;
-
       .list {
         width: 100%;
         height: 100%;

@@ -203,7 +203,7 @@
           align-items: center;
 
           .label, .input {
-            @include font(16);
+            font-size: .426667rem;
             color: #444444;
             height: 1.466667rem;
             line-height: 1.466667rem;

@@ -60,6 +60,9 @@
       <div class="card-content-part card-content-part3">
         <div class="head">
           <p class="head-title">专业证书</p>
+          <p @click="onEditContentPart3"
+             class="head-edit"
+             v-if="!isEditContentPart3">编辑</p>
         </div>
         <div class="part-content upload-default"
              v-if="isEmptyObj(professionImg)">
@@ -68,15 +71,26 @@
             <p>添加专业证书</p>
           </div>
         </div>
-        <ImgInputer
-          :class="{'input-bg': certificate}"
-          :imgSrc="certificate"
-          :max-size="10240"
-          :on-change="imageChange"
-          accept="image/*"
-          ref="imgInputer"
-          v-model="professionImg">
-        </ImgInputer>
+        <div class="img-area">
+          <ImgInputer
+            v-if="isEditContentPart3"
+            :class="{'input-bg': certificate}"
+            :imgSrc="certificate"
+            :max-size="10240"
+            :on-change="imageChange"
+            accept="image/*"
+            ref="imgInputer"
+            v-model="professionImg">
+          </ImgInputer>
+          <div class="img-show"
+               v-if="!isEditContentPart3">
+            <p v-if="!certificate">暂未上传图片 点击编辑名片上传哦~</p>
+            <img :src="certificate" alt="">
+          </div>
+          <div class="img-delete-btn"
+               v-if="isEditContentPart3 && certificate"
+               @click="deleteImage"></div>
+        </div>
       </div>
 
       <!-- Part3-4: 保存按钮 -->
@@ -124,6 +138,8 @@
         certificate: '', // 专业证图片服务端地址
 
         professionImg: {}, // 专业证图片
+
+        isEditContentPart3: false, // 是否可以编辑专业证书
 
         isShowInitLoading: true, // 是否展示页面加载动画
 
@@ -214,6 +230,13 @@
       },
 
       /**
+       * 点击编辑专业证书
+       */
+      onEditContentPart3 () {
+        this.isEditContentPart3 = true;
+      },
+
+      /**
        * 点击保存
        */
       handleSave () {
@@ -288,15 +311,24 @@
             this['SET_LOADING']('close');
             this.certificate = res.url;
           })
+          .catch(() => {
+            this['SET_LOADING']('close');
+          })
       },
 
       /**
        * 监听到图片改变，自动提交操作
        */
       imageChange () {
-        this.uploadPic();
-      }
+        this.isEditContentPart3 && this.uploadPic();
+      },
 
+      /**
+       * 删除图片
+       */
+      deleteImage () {
+        this.certificate = '';
+      }
     },
 
     watch: {
@@ -355,6 +387,38 @@
           img {
             height: 100%;
             max-width: 100%;
+          }
+        }
+
+        .img-area {
+          position: relative;
+          .img-show {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0.373rem auto;
+            width: 8.053rem;
+            height: 4.8rem;
+            font-size: 0.347rem;
+            color: #999999;
+            line-height: 0.453rem;
+            background: url("../../assets/images/card_upload_bg.png");
+            background-size: cover;
+            img {
+              height: 100%;
+              max-width: 100%;
+            }
+          }
+          .img-delete-btn {
+            position: absolute;
+            z-index: 10;
+            top: calc(-.28rem);
+            right: calc(.38rem);
+            width: 0.533rem;
+            height: 0.533rem;
+            border-radius: 50%;
+            background: url("../../../static/images/public_delete.png") center center;
+            background-size: cover;
           }
         }
 

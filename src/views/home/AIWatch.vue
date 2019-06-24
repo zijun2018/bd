@@ -44,7 +44,7 @@
                 <p class="content-part2" v-if="preWatchData.detail">{{preWatchData.detail.title}}</p>
                 <p class="content-desc" v-if="preWatchData.detail">{{preWatchData.detail.description}}</p>
                 <p class="content-part3" v-if="preWatchData.detail && preWatchData.detail.stats">
-                  分享早报，今日已获客{{preWatchData.detail.stats.view_num}}人</p>
+                  分享文章，今日已获客{{preWatchData.detail.stats.view_num}}人</p>
               </div>
             </div>
 
@@ -123,7 +123,7 @@
         posWatchData: {}, // 盘后数据
 
         tabList: [ // tab栏
-          {label: '盘前观测', value: '0'},
+          {label: '盘前精选', value: '0'},
           {label: '复盘总结', value: '1'}
         ],
 
@@ -165,7 +165,6 @@
         getWatchMorningMarketDetail({}).then(res => {
           this.isFinishQuest = true;
           this['SET_LOADING']('close');
-          console.log(res);
           // 先判断trading_day是否为1，是则当天是交易日，否则今天不是交易日,显示非交易日
           // 如果是交易日，但是detail为空，则显示正在整理数据，否则正常显示
           this.preWatchData = res;
@@ -180,7 +179,6 @@
         getWatchCompoundDetail({}).then(res => {
           this.isFinishQuest = true;
           this['SET_LOADING']('close');
-          console.log(res);
           // 先判断is_trading_day是否为1，是，则代表今天是交易日并且有数据，否则代表显示的是上一个交易日的数据
           // 如果是交易日，detail为空，则数据处理中，否则正常显示
           // 如果是上一个交易日，detail为空，则数据缺失，否则正常显示
@@ -201,7 +199,6 @@
 
     watch: {
       tabType (newVal) {
-        console.log(newVal);
         switch (Number(newVal)) {
           case 0:
             isEmptyObj(this.preWatchData) && this.getWatchPreviewData();

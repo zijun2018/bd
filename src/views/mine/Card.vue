@@ -67,8 +67,8 @@
 
 <script>
   import NameCard from '../../components/name-card';
-  import {getAgentUserInfo, postAgentAddCardToNews, postAddNewsTime} from '../../api/agent';
-  import {getNews, postNewsShareStats} from '../../api/news'
+  import {getAgentUserInfo, postAgentAddCardToNews} from '../../api/agent';
+  import {getNews, postNewsShareStats, postAddNewsTime} from '../../api/news'
   import {mapGetters, mapMutations} from 'vuex';
   import {handleAuth} from '../../utils/base-methods';
 
@@ -354,12 +354,12 @@
     }
 
     .card-content-wrap {
-      padding: 0 0.373rem;
+      padding: 0 0.373rem 0.267rem 0.373rem;
       .card-content-part {
         &:not(:last-of-type) {
           margin-bottom: 1.2rem;
         }
-        margin-bottom: 0.88rem;
+        /*margin-bottom: 0.88rem;*/
         .head-title {
           font-size: 0.427rem;
           line-height: 0.693rem;
@@ -386,7 +386,7 @@
           display: flex;
           justify-content: center;
           align-items: center;
-          margin: 0.373rem auto 0.88rem;
+          margin: 0.373rem auto;
           width: 8.053rem;
           height: 4.8rem;
           background: url("../../assets/images/card_upload_bg.png");
@@ -396,7 +396,7 @@
           display: flex;
           justify-content: center;
           align-items: center;
-          margin: 0.373rem auto 0.88rem;
+          margin: 0.373rem auto;
           width: 8.053rem;
           height: 4.8rem;
           background: #F3F3F3;

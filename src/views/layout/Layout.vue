@@ -8,7 +8,7 @@
 
 
 <template>
-  <div class="layout-outer" :class="{needAda: needAda}">
+  <div class="layout-outer needAda">
     <div class="layout">
       <div class="content-wraper">
         <keep-alive include="home,userInfo">
@@ -38,26 +38,12 @@
 
     data () {
       return {
-        selected: '',
-        needAda: false
+        selected: ''
       }
     },
 
     created () {
       this.selected = this.$route.meta.tab;
-      this.isNeedAda();
-      window.onresize = () => {
-        this.isNeedAda();
-      }
-    },
-
-    methods: {
-      /* 是否需要规避底部按钮 */
-      isNeedAda () {
-        let viewportH = window.innerHeight || document.documentElement.clientHeight;
-        let viewportW = window.innerWidth || document.documentElement.clientWidth;
-        this.needAda = viewportW === 375 && viewportH === 724 && window.devicePixelRatio === 3;
-      }
     },
 
     watch: {
@@ -74,14 +60,14 @@
   @import "../../styles/mixin";
   .layout-outer {
     width: 100%;
-    height: 100vh;
+    height: 100%;
     background-color: #eeeeee;
     .layout {
       width: 100%;
       height: 100%;
       .content-wraper {
         width: 100%;
-        height: calc(100vh - 1.173333rem);
+        padding-bottom: 1.173333rem;
         overflow-y: scroll;
       }
       .mint-tabbar {
@@ -162,14 +148,20 @@
     }
   }
 
-/* iphoneX适配 */
+/* iphone刘海适配 */
 .needAda {
   .mint-tabbar.is-fixed {
-    padding-bottom: 10px;
-    height: calc(1.173333rem + 10px);
+    /* IOS 11支持,此处兼容处理 */
+    @supports (bottom: env(safe-area-inset-bottom)){
+      height: calc(1.173333rem + env(safe-area-inset-bottom));
+    }
+    /*IOS 11.2+版本版本支持 */
+    @supports (bottom: constant(safe-area-inset-bottom)){
+      height: calc(1.173333rem + constant(safe-area-inset-bottom));
+    }
   }
   .content-wraper {
-    height: calc(100vh - 1.173333rem - 10px);
+    height: 100%;
   }
 }
 </style>

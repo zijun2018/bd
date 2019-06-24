@@ -109,9 +109,11 @@
 
   .mine-outer {
     width: 100%;
+    min-height: 100%;
 
     .mine {
       width: 100%;
+      min-height: 100%;
       background-color: #eeeeee;
       padding-top: .266667rem;
       padding-bottom: .266667rem;

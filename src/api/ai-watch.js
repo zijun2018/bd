@@ -15,7 +15,7 @@ const baseUrl = process.env.BASE_URL;
  * 盘前观测
  * @param params {Object} 接口参数对象
  * @returns {AxiosPromise}
- * http://119.23.211.23:8083/project/74/interface/api/1649
+ * http://119.23.211.23:8083/project/74/interface/api/2482
  */
 export function getWatchMorningMarketDetail (params = {}) {
   return request({
@@ -29,7 +29,7 @@ export function getWatchMorningMarketDetail (params = {}) {
  * 盘后总结
  * @param params {Object} 接口参数对象
  * @returns {AxiosPromise}
- * http://119.23.211.23:8083/project/74/interface/api/1655
+ * http://119.23.211.23:8083/project/74/interface/api/2483
  */
 export function getWatchCompoundDetail (params = {}) {
   return request({

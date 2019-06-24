@@ -13,6 +13,10 @@
   + postAgentOpinionFeedback : 意见反馈
   + postComplaintImg : 投诉上传证据截图
   
++ ai-watch.js: 智能看盘相关接口
+  + getWatchMorningMarketDetail : 盘前观测
+  + getWatchCompoundDetail : 盘后总结
+  
   
 + news.js : 资讯&广告相关接口
   + getBanners : 广告列表

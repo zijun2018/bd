@@ -18,6 +18,7 @@ import GLComponets from '../src/components-global/components-global'
 import VueLazyload from 'vue-lazyload'
 import VueWechatTitle from 'vue-wechat-title'
 import share from './assets/js/share'
+import VueScroller from 'vue-scroller'
 
 // 引入全局样式
 import '@/styles/mintUI.scss'
@@ -36,6 +37,7 @@ window._ = _;
 // 微信sdk对象
 window.WechatPlugin = null;
 Vue.use(share);
+Vue.use(VueScroller);
 
 flexible(window, document);
 Vue.use(MintUI);

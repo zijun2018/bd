@@ -31,10 +31,10 @@
                   {{item.title}}</p>
                 <div class="tag-wraper">
                   <div class="tag">
-                    {{tagGroup[item.tag]}}
+                    <span>{{tagGroup[item.tag]}}</span>
                   </div>
                   <div class="tag" v-if="item.classification">
-                    {{classGroup[item.classification]}}
+                    <span>{{classGroup[item.classification]}}</span>
                   </div>
                 </div>
                 <div class="date-readandrep">
@@ -276,12 +276,19 @@
                   display: flex;
 
                   .tag {
-                    @include font(10);
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
                     color: #084ec2;
-                    padding: .026667rem .066667rem;
-                    border: 1px solid #084ec2;
                     &:not(:last-of-type) {
-                      margin-right: 8px;
+                      margin-right: 0.213rem;
+                    }
+
+                    span {
+                      @include font(10);
+                      font-family: -apple-system-font, sans-serif;
+                      padding: .026667rem .066667rem;
+                      border: 1px solid #084ec2;
                     }
                   }
                 }

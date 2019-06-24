@@ -135,8 +135,31 @@
 //   max-width: 640px;
 //   margin: 0 auto;
 // }
-body {
+html {
+  position: relative;
+  height: 100%;
+}
+
+body{
+  position: relative;
+  height: 100%;
   background-color: #ffffff;
+}
+
+/* IOS 11支持,此处兼容处理 */
+@supports (bottom: constant(safe-area-inset-bottom)){
+  html{
+    padding-top: constant(safe-area-inset-top);
+    padding-bottom: constant(safe-area-inset-bottom);
+
+  }
+}
+/*IOS 11.2+版本版本支持 */
+@supports (bottom: env(safe-area-inset-bottom)){
+  html{
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
 }
 
 .f-obcenter {

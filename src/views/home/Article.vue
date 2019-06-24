@@ -8,7 +8,8 @@
 
 
 <template>
-  <div class="bd-article-outer">
+  <div class="bd-article-outer"
+       :class="{'no-card-area': !isShowCard}">
 
     <!-- Part1: 预加载页 -->
     <gl-page-init-loading v-if="loadingVisible"></gl-page-init-loading>
@@ -21,12 +22,15 @@
 
       <!-- Part2-1: 个人名片信息 -->
       <div class="mp"
-           v-if="$route.query.from_type === '0' || ($route.query.from_type === '1' && agentInfo.user_name) || ($route.query.from_type === '2' && agentInfo.user_name)">
+           v-if="($route.query.from_type === '0' && isShowCard)
+           || ($route.query.from_type === '1' && agentInfo.user_name && isShowCard)
+           || ($route.query.from_type === '2' && agentInfo.user_name && isShowCard)">
         <NameCard :enableEdit="$route.query.from_type === '0'" :info="agentInfo"></NameCard>
       </div>
 
       <!-- Part2-1-add: AI Tips -->
       <div class="ai-tips"
+           :class="{'hidden-card': !isShowCard}"
            v-if="source && $route.query.from_type === '0'">
         <p class="tag">{{tipTag}}</p>
         <p class="gap"></p>
@@ -90,6 +94,7 @@
     <div class="btn"
          v-if="$route.query.from_type === '0'">
       <p @click="handleLeft" class="btn-left">编辑</p>
+      <p @click="handleShowOrCard" class="btn-left btn-show-card">{{isShowCard ? '隐藏' : '显示'}}名片</p>
       <p @click="shadowVisible = true" class="btn-right">转发获客</p>
     </div>
     <!-- Part3-2: 底部按钮，非代理商 -->
@@ -172,6 +177,8 @@
         tipText: '', // AI 智能看盘提示
         tipTag: '', // AI 智能看盘提示标签
 
+        isShowCard: this.$route.query.showCard ? String(this.$route.query.showCard) === '1' : true, // 是否显示名片，默认展示
+        shareDesc: '', // 分享描述
 
         /*************************************/
         /*       底部分享之后非代理商显示信息      */
@@ -219,7 +226,7 @@
             let descTxt = removeHtmlTag(descDom.innerHTML);
             desc = descTxt || '量化云展业宝 微信号：gh_12d6fc402473';
           }
-
+          this.shareDesc = desc;
           this.getNewsShareInfo(desc);
           setTimeout(() => {
             this.loadingVisible = false;
@@ -292,7 +299,6 @@
        * @param desc {String} 分享描述内容
        */
       getNewsShareInfo (desc) {
-        console.log(desc)
         /* 转发的经纪商和读者之间的逻辑关系 */
         // `from_type` 用户来源类型，1：代理商；2：非代理商。（用户）；0：代理商自己阅读
         // `from_id` 用户id，如果是代理商就是agentid，如果是非代理商（用户），就是user_id
@@ -310,6 +316,13 @@
         }
         url = url.replace('&source=preWatch', ''); // 分享去除ai提示
         url = url.replace('&source=posWatch', ''); // 分享去除ai提示
+
+        // 处理是否显示名片
+        if (url.indexOf('showCard') > -1) {
+          url = url.replace(/&showCard=[0|1]/, `&showCard=${this.isShowCard ? '1' : '0'}`);
+        } else {
+          url += `&showCard=${this.isShowCard ? '1' : '0'}`
+        }
 
         // 分享成功后的统计回调
         const shareSuccess = () => {
@@ -339,13 +352,23 @@
           agentId: this.$route.query.agentId,
           from_type: this.$route.query.from_type,
           from_id: this.$route.query.from_id,
-          isEdited: this.$route.query.isEdited ? String(this.$route.query.isEdited) : '0'
+          isEdited: this.$route.query.isEdited ? String(this.$route.query.isEdited) : '0',
+          showCard: this.isShowCard ? '1' : '0'
         };
         this.source && (queryObj.source = this.source); // 如果有ai智能看盘，才传此值
         this.$router.push({
           name: 'public_edit',
           query: queryObj
         })
+      },
+
+      /**
+       * 处理是否显示/隐藏名片
+       */
+      handleShowOrCard () {
+        this.isShowCard = !this.isShowCard;
+        // 配置微信分享
+        this.getNewsShareInfo(this.shareDesc);
       },
 
       /**
@@ -404,17 +427,21 @@
 
   .bd-article-outer {
     width: 100%;
-    height: 100vh;
+    height: 100%;
     background-color: #eeeeee;
+
+    &.no-card-area {
+      padding-top: .373rem;
+    }
 
     & > .bd-article {
       width: 100%;
-      height: calc(100vh - 1.173rem);
+      padding-bottom: 1.467rem;
       background-color: #EEEEEE;
       overflow-x: hidden;
 
       &.padding-bottom {
-        height: calc(100vh - 1.44rem);
+        padding-bottom: 1.44rem;
       }
       &.hide {
         opacity: 0;
@@ -479,6 +506,10 @@
         align-items: center;
         height: 0.48rem;
         margin: -0.267rem 0.373rem 0.533rem;
+
+        &.hidden-card {
+          margin-top: 0.16rem;
+        }
 
         .tag {
           display: flex;
@@ -585,11 +616,20 @@
     display: flex;
     flex-direction: row;
     position: fixed;
+    z-index: 1;
     bottom: 0;
     left: 0;
     width: 100vw;
     height: 1.173rem;
-
+    background-color: #ffffff;
+    /* IOS 11.2+ 版本版本支持 */
+    @supports (bottom: env(safe-area-inset-bottom)){
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+    /* IOS 11支持,此处做兼容 */
+    @supports (bottom: constant(safe-area-inset-bottom)) {
+      padding-bottom: constant(safe-area-inset-bottom);
+    }
     p {
       display: flex;
       justify-content: center;
@@ -602,6 +642,11 @@
       color: $colorB3;
       border-top: 0.027rem solid #EEEEEE;
       background-color: $white;
+    }
+
+    p.btn-show-card {
+      background-color: #E4F0FF;
+      color: #1C52BB;
     }
 
     p.btn-right {
@@ -622,6 +667,14 @@
     height: 1.44rem;
     background-color: #ffffff;
     border-top: 0.027rem solid #EEEEEE;
+    /* IOS 11.2+ 版本版本支持 */
+    @supports (bottom: env(safe-area-inset-bottom)){
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+    /* IOS 11支持,此处做兼容 */
+    @supports (bottom: constant(safe-area-inset-bottom)) {
+      padding-bottom: constant(safe-area-inset-bottom);
+    }
     &.hide {
       opacity: 0;
     }

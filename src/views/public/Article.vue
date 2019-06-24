@@ -12,7 +12,8 @@
   <div class="public-article">
 
     <!-- Part1: 用户名片 -->
-    <div class="user-card">
+    <div class="user-card"
+         v-if="isShowCard">
       <NameCard :info="userInfo && userInfo.agent"></NameCard>
     </div>
 
@@ -36,6 +37,7 @@
     <!-- Part3: 底部按钮 -->
     <div class="article-btn">
       <p @click="handleEdit" class="btn-left">{{btnTxtLeft}}</p>
+      <p @click="handleShowOrCard" class="btn-left btn-show-card">{{isShowCard ? '隐藏' : '显示'}}名片</p>
       <p @click="handleForward" class="btn-right">{{btnTxtRight}}</p>
     </div>
 
@@ -95,6 +97,8 @@
 
         shareUserId: '', // 分享人的用户id
 
+        agentId: '', // 代理人id
+
         shareTitle: '', // 分享标题
 
         shareUrl: '', // 分享地址
@@ -103,7 +107,9 @@
 
         isSaveFromWx: this.$route.query.weChatUrl || this.$route.query.queryLink ? 1 : 0,
 
-        isGetNewsFinish: false // 是否完成了getNews请求，配置微信分享，只有完成微信配置，才可以进行页面跳转
+        isGetNewsFinish: false, // 是否完成了getNews请求，配置微信分享，只有完成微信配置，才可以进行页面跳转
+
+        isShowCard: this.$route.query.showCard ? String(this.$route.query.showCard) === '1' : true // 是否显示名片，默认展示
 
       }
     },
@@ -146,11 +152,14 @@
               // 关闭加载动画
               this['SET_LOADING']('close');
 
-              this.shareUrl = `${location.protocol}//${location.host}/article?key=${this.articleKey}&from_type=1&from_id=${this.userInfoData.agent.agent_id}&agentId=${this.userInfoData.agent.agent_id}&isSaveFromWx=${this.isSaveFromWx}`;
+              this.shareUrl = `${location.protocol}//${location.host}/article?key=${this.articleKey}&from_type=1&from_id=${this.userInfoData.agent.agent_id}&agentId=${this.userInfoData.agent.agent_id}&isSaveFromWx=${this.isSaveFromWx}&showCard=${this.isShowCard ? '1' : '0'}`;
 
               // 配置微信分享
               this.agentInfo = response.agent; // 保存代理人信息
               this.isLogin = Boolean(response.user_info.is_login); // 保存是否登录状态
+              this.shareTitle = response.news.title; // 分享标题
+              this.shareImg = response.news.article_url; // 分享图片
+              this.agentId = response.agent.agent_id; // 代理人id
               this.shareUserId = response.user_info.user_id; // 用户id
               this.wxConfig = response.wx_config; // 微信配置
               this.randid = response.user_info.rand_id; // 更新阅读时间传递的id
@@ -189,7 +198,7 @@
             }).then(res => {
               this.articleKey = res.key; // 拿到key值，再去获取wx_config
 
-              this.shareUrl = `${location.protocol}//${location.host}/article?key=${res.key}&from_type=1&from_id=${this.userInfoData.agent.agent_id}&agentId=${this.userInfoData.agent.agent_id}&isSaveFromWx=${this.isSaveFromWx}`;
+              this.shareUrl = `${location.protocol}//${location.host}/article?key=${res.key}&from_type=1&from_id=${this.userInfoData.agent.agent_id}&agentId=${this.userInfoData.agent.agent_id}&isSaveFromWx=${this.isSaveFromWx}&showCard=${this.isShowCard ? '1' : '0'}`;
 
               getNews({
                 key: res.key,
@@ -209,6 +218,7 @@
                   this.agentInfo = response.agent; // 保存代理人信息
                   this.isLogin = Boolean(response.user_info.is_login); // 保存是否登录状态
                   this.shareUserId = response.user_info.user_id; // 用户id
+                  this.agentId = response.agent.agent_id; // 代理人id
                   this.wxConfig = response.wx_config; // 微信配置
                   this.randid = response.user_info.rand_id; // 更新阅读时间传递的id
                   this.shareImg = response.news.article_url || DEFAULT_SHARE_IMAGES[randomInt(1, 7)];
@@ -281,13 +291,38 @@
           this.articleKey
             ? this.$router.push({
               name: 'public_edit',
-              query: {key: this.articleKey, isSaveFromWx: '1', weChatUrl: encodeURIComponent(this.weChatUrl)}
+              query: {key: this.articleKey, isSaveFromWx: '1', showCard: (this.isShowCard ? '1' : '0'), weChatUrl: encodeURIComponent(this.weChatUrl)}
             })
             : this.$router.push({
               name: 'public_edit',
-              query: {queryLink: encodeURIComponent(this.linkData), weChatUrl: encodeURIComponent(this.weChatUrl)}
+              query: {queryLink: encodeURIComponent(this.linkData), showCard: (this.isShowCard ? '1' : '0'), weChatUrl: encodeURIComponent(this.weChatUrl)}
             });
         }
+      },
+
+      /**
+       * 处理是否显示/隐藏名片
+       */
+      handleShowOrCard () {
+        this.isShowCard = !this.isShowCard;
+        // 处理是否显示名片
+        if (this.shareUrl.indexOf('showCard') > -1) {
+          this.shareUrl = this.shareUrl.replace(/&showCard=[0|1]/, `&showCard=${this.isShowCard ? '1' : '0'}`);
+        } else {
+          this.shareUrl += `&showCard=${this.isShowCard ? '1' : '0'}`
+        }
+        // 配置微信分享
+        const shareSuccess = () => {
+          this.isShowShadow = false; // 关闭转发提示蒙层
+          postNewsShareStats({
+            from_type: '1',
+            from_id: this.userInfoData.agent.agent_id || '0',
+            key: this.articleKey,
+            agent_id: this.agentId,
+            user_id: this.shareUserId
+          })
+        };
+        this.shareList(this.shareTitle, this.shareImg, this.shareDesc, this.shareUrl, shareSuccess);
       },
 
       /**
@@ -391,9 +426,17 @@
 
 
   .public-article {
-    min-height: 100vh;
+    height: 100%;
     padding: 0.267rem 0.427rem 1.28rem;
     background-color: $bgColor;
+    /* IOS 11支持,此处兼容处理 */
+    @supports (bottom: constant(safe-area-inset-bottom)){
+      padding-bottom: calc(1.467rem + constant(safe-area-inset-bottom));
+    }
+    /*IOS 11.2+版本版本支持 */
+    @supports (bottom: env(safe-area-inset-bottom)){
+      padding-bottom: calc(1.467rem + env(safe-area-inset-bottom));
+    }
 
     .article-content {
       margin-top: 0.293rem;
@@ -419,6 +462,15 @@
       left: 0;
       width: 100vw;
       height: 1.173rem;
+      background-color: #ffffff;
+      /* IOS 11.2+ 版本版本支持 */
+      @supports (bottom: env(safe-area-inset-bottom)){
+        padding-bottom: env(safe-area-inset-bottom);
+      }
+      /* IOS 11支持,此处做兼容 */
+      @supports (bottom: constant(safe-area-inset-bottom)) {
+        padding-bottom: constant(safe-area-inset-bottom);
+      }
 
       p {
         display: flex;
@@ -432,6 +484,11 @@
         color: $colorB3;
         border-top: 0.027rem solid #EEEEEE;
         background-color: $white;
+      }
+
+      p.btn-show-card {
+        background-color: #E4F0FF;
+        color: #1C52BB;
       }
 
       p.btn-right {

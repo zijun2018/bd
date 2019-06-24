@@ -86,6 +86,8 @@
 
         isSaveFromWx: Number(this.$route.query.isSaveFromWx) === 1, // 是否来源于微信公众号
 
+        isShowCard: this.$route.query.showCard ? String(this.$route.query.showCard) === '1' : true, // 是否显示名片，默认展示
+
         articleData: null, // 本地资讯文章数据
 
         isEdited: this.$route.query.isEdited ? String(this.$route.query.isEdited) : '0', // 是否有被编辑过
@@ -164,12 +166,7 @@
         }).then(res => {
           this.isShowInitLoading = false;
           this.articleKey = res.key;
-/*
-          this.$router.push({
-            name: 'public_article',
-            query: {key: String(this.articleKey), weChatUrl: encodeURIComponent(this.weChatUrl), isSaveFromWx: this.isSaveFromWx ? 1 : 0, isEdited: '1'}});
-*/
-          location.href = `${location.protocol}//${location.host}/public/article?key=${this.articleKey}&weChatUrl=${encodeURIComponent(this.weChatUrl)}&isSaveFromWx=${this.isSaveFromWx ? 1 : 0}&isEdited=1`
+          location.href = `${location.protocol}//${location.host}/public/article?key=${this.articleKey}&weChatUrl=${encodeURIComponent(this.weChatUrl)}&isSaveFromWx=${this.isSaveFromWx ? 1 : 0}&isEdited=1&showCard=${this.isShowCard ? '1' : '0'}`
         })
       },
 
@@ -184,24 +181,11 @@
           this.isShowInitLoading = false;
           // location.href = `${location.protocol}//${location.host}/article?key=${this.articleKey}&agentId=${this.$route.query.agentId}&from_type=${this.$route.query.from_type}&from_id=${this.$route.query.from_id}&isSaveFromWx=${this.isSaveFromWx ? 1 : 0}&isEdited=1`;
 
-          let hrefUrl = `${location.protocol}//${location.host}/article?key=${this.articleKey}&agentId=${this.$route.query.agentId}&from_type=${this.$route.query.from_type}&from_id=${this.$route.query.from_id}&isSaveFromWx=${this.isSaveFromWx ? 1 : 0}&isEdited=1`;
+          let hrefUrl = `${location.protocol}//${location.host}/article?key=${this.articleKey}&agentId=${this.$route.query.agentId}&from_type=${this.$route.query.from_type}&from_id=${this.$route.query.from_id}&isSaveFromWx=${this.isSaveFromWx ? 1 : 0}&isEdited=1&showCard=${this.isShowCard ? '1' : '0'}`;
 
           this.$route.query.source && (hrefUrl += `&source=${this.$route.query.source}`);
 
           location.href = hrefUrl;
-/*
-          this.$router.push({
-            name: 'article',
-            query: {
-              key: String(this.articleKey),
-              agentId: this.$route.query.agentId,
-              from_type: this.$route.query.from_type,
-              from_id: this.$route.query.from_id,
-              isSaveFromWx: this.isSaveFromWx ? 1 : 0,
-              isEdited: '1'
-            }
-          });
-*/
         })
       },
 
@@ -262,6 +246,7 @@
           const images = handleContent.querySelectorAll('img');
           for (let i = 0; i < images.length; i++) {
             images[i].style.maxWidth = '100%';
+            images[i].style.height = 'auto';
           }
         } else {
           handleContent = document.querySelector('.rich_media_content')
@@ -402,6 +387,16 @@
     padding: 0 0.427rem 1.28rem;
     background-color: $bgColor;
     font-size: 0.373rem;
+
+    /* IOS 11支持,此处兼容处理 */
+    @supports (bottom: constant(safe-area-inset-bottom)){
+      padding-bottom: calc(1.467rem + constant(safe-area-inset-bottom));
+    }
+    /*IOS 11.2+版本版本支持 */
+    @supports (bottom: env(safe-area-inset-bottom)){
+      padding-bottom: calc(1.467rem + env(safe-area-inset-bottom));
+    }
+
     &.have-padding-top {
       padding-top: 0.427rem;
     }
@@ -419,6 +414,7 @@
       background-color: $bgColor;
       p {
         font-size: 0.373rem;
+        letter-spacing: 1px;
         line-height: 0.48rem;
         color: $colorB9;
         padding-left: 0.4rem;
@@ -470,6 +466,7 @@
         padding: 0 0.4rem;
         img {
           max-width: 100%;
+          height: auto;
         }
       }
 
@@ -484,6 +481,15 @@
       left: 0;
       width: 100vw;
       height: 1.173rem;
+      background-color: #ffffff;
+      /* IOS 11.2+ 版本版本支持 */
+      @supports (bottom: env(safe-area-inset-bottom)){
+        padding-bottom: env(safe-area-inset-bottom);
+      }
+      /* IOS 11支持,此处做兼容 */
+      @supports (bottom: constant(safe-area-inset-bottom)) {
+        padding-bottom: constant(safe-area-inset-bottom);
+      }
 
       p {
         display: flex;

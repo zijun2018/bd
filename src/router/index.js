@@ -280,6 +280,7 @@ const router = new Router({
 });
 
 router.beforeEach((to, from, next) => {
+  Vue.prototype.shareList();
   if (to.meta.title) {
     window.document.title = to.meta.title
   }

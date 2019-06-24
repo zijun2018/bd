@@ -7,7 +7,7 @@
 */
 
 <template>
-  <div>
+  <div class="main-index">
     <transition :name="transitionName" mode="out-in">
       <keep-alive include="layout,wechatCode">
         <router-view></router-view>
@@ -45,3 +45,16 @@
   }
 </script>
 
+<style lang="scss">
+  .main-index > div {
+    min-height: 100vh;
+      /* IOS 11.2+ 版本版本支持 */
+      @supports (bottom: env(safe-area-inset-bottom)){
+        padding-bottom: env(safe-area-inset-bottom);
+      }
+      /* IOS 11支持,此处做兼容 */
+      @supports (bottom: constant(safe-area-inset-bottom)) {
+        padding-bottom: constant(safe-area-inset-bottom);
+      }
+    }
+</style>

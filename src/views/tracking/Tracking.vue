@@ -63,12 +63,17 @@
     width: 100%;
 
     .tracking {
+      position: relative;
       width: 100%;
       height: 100vh;
 
       .tab {
+        position: absolute;
+        top: 0;
+        z-index: 9999;
         width: 100%;
         height: .933333rem;
+        background-color: #fff;
         border-bottom: 1px solid #e2e2e2;
         display: flex;
         justify-content: space-between;
@@ -100,8 +105,11 @@
       }
 
       .con {
+        position: absolute;
+        top: .96rem;
         width: 100%;
         height: calc(100vh - 0.933333rem - 1px);
+        -webkit-overflow-scrolling: touch;
         overflow-x: hidden;
         overflow-y: scroll;
       }
